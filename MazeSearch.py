@@ -419,16 +419,27 @@ def plot_nodes(table, sizes=(10, 25, 50)):
     except ImportError:
         print("(matplotlib not installed, graph skipped)")
         return
-    for name, data in table.items():
-        plt.plot(sizes, [data[n]["nodes"] for n in sizes], marker="o", label=name)
-    plt.xlabel("Maze size (n x n)")
-    plt.ylabel("Nodes expanded")
-    plt.title("Nodes expanded vs maze size")
-    plt.xticks(sizes)
-    plt.legend()
-    plt.grid(True, alpha=0.3)
-    plt.savefig("nodes_vs_size.png", dpi=150, bbox_inches="tight")
-    print("Graph saved as nodes_vs_size.png")
+    # Three separate graphs: nodes, execution time and memory (max frontier).
+    # Nodes and frontier are counts (same every run); time (ms) varies a little per run.
+    graphs = [("nodes", "Nodes expanded", "Nodes expanded vs maze size",
+               "nodes_vs_size.png"),
+              ("ms", "Execution time (ms)", "Execution time vs maze size",
+               "time_vs_size.png"),
+              ("frontier", "Max queue/stack size", "Memory (max queue/stack size) vs maze size",
+               "memory_vs_size.png")]
+    for key, ylabel, title, filename in graphs:
+        plt.figure(figsize=(6, 4))
+        for name, data in table.items():
+            plt.plot(sizes, [data[n][key] for n in sizes], marker="o", label=name)
+        plt.xlabel("Maze size (n x n)")
+        plt.ylabel(ylabel)
+        plt.title(title)
+        plt.xticks(sizes)
+        plt.legend()
+        plt.grid(True, alpha=0.3)
+        plt.savefig(filename, dpi=150, bbox_inches="tight")
+        plt.close()
+        print(f"Graph saved as {filename}")
 
 
 if __name__ == "__main__":
