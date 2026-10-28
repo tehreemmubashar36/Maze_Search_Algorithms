@@ -11,7 +11,6 @@ Conventions (used for every algorithm, and stated in the report):
   * Heuristic = Manhattan distance to the goal.
 
 Run:  python search_maze.py
-Only the standard library is needed (matplotlib is optional, for one graph).
 """
 import heapq
 import random
@@ -356,7 +355,7 @@ def size_experiment(sizes=(10, 25, 50)):
 
 
 def heuristic_experiment(sizes=(10, 25, 50)):
-    print("Heuristic experiment: nodes expanded / path cost  (time in ms for A*)")
+    print("Heuristic experiment: nodes expanded / path cost  (time in ms for A* and GBFS)")
     for n in sizes:
         maze, _ = random_maze(n)
         best = optimal_cost(maze)
@@ -369,14 +368,15 @@ def heuristic_experiment(sizes=(10, 25, 50)):
                                                   + abs(c[1] - m.goal[1])),
         ]
         print(f"\n{n}x{n} maze, optimal cost = {best}")
-        print(f"{'Heuristic':<16}{'A* nodes/cost':>16}{'A* ms':>9}{'Optimal?':>10}"
-              f"{'GBFS nodes/cost':>18}")
+        print(f"{'Heuristic':<16}{'A* nodes/cost':>16}{'A* ms':>9}{'A* opt?':>9}"
+              f"{'GBFS nodes/cost':>18}{'GBFS ms':>9}{'GBFS opt?':>11}")
         for label, h in heuristics:
             a = run(maze, lambda m, h=h: astar(m, h))
-            g = run(maze, lambda m, h=h: gbfs(m, h), with_time=False)
+            g = run(maze, lambda m, h=h: gbfs(m, h))
             print(f"{label:<16}{str(a['nodes']) + ' / ' + str(a['cost']):>16}"
-                  f"{a['ms']:>9.3f}{('Yes' if a['cost'] == best else 'No'):>10}"
-                  f"{str(g['nodes']) + ' / ' + str(g['cost']):>18}")
+                  f"{a['ms']:>9.3f}{('Yes' if a['cost'] == best else 'No'):>9}"
+                  f"{str(g['nodes']) + ' / ' + str(g['cost']):>18}"
+                  f"{g['ms']:>9.3f}{('Yes' if g['cost'] == best else 'No'):>11}")
     print()
 
 
